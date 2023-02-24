@@ -11,7 +11,7 @@ As part of other flakes
 	# ...
 	inputs = {
 		nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-		project-a.url = "github:user/flake-nvim-vimrc-code";
+		project-a.url = "github:argent0/flake-nvim-vimrc-code";
 		# ...
 	};
 

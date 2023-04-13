@@ -5,25 +5,27 @@
 
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
 
-    baseVimrc = ''
-" show number
-set number
-" highlight the 80th column
-set colorcolumn=80
-" set the column highlight color to light blue
-highlight ColorColumn ctermbg=lightblue guibg=lightblue
-" don't wrap lines
-set nowrap
-    '';
+  in {
 
-    nvimShell = {
+    packages.x86_64-linux.vimrc = pkgs.stdenv.mkDerivation {
+      name = "vimrc";
+      src = ./.;
+      installPhase = ''
+        mkdir -p $out
+        cp vimrc $out/vimrc
+      '';
+    };
+
+    lib = let
+      vimrcPath = "${self.packages.x86_64-linux.vimrc}/vimrc";
+      baseVimrc = builtins.readFile vimrcPath;
+    in {
       version = "1.0.0";
       neovim = {
         extraVimrcLines ? "",
         extraVimPlugins ? [ ],
         extraNixDerivations ? [ ],
-      }:
-      let
+      }: let
         vimrc = baseVimrc + "\n" + extraVimrcLines;
         vimPlugins = {
           start = ( with pkgs.vimPlugins; [
@@ -48,16 +50,14 @@ set nowrap
         ] ++ extraNixDerivations;
       };
     };
-  in {
 
-    lib = nvimShell;
 
     packages.x86_64-linux.default = pkgs.buildEnv {
       name = "nvimShell";
       paths = [];
     };
 
-    devShell.x86_64-linux = nvimShell.neovim { };
+    devShell.x86_64-linux = self.lib.neovim { };
 
   };
 }

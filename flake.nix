@@ -43,21 +43,24 @@
             };
           };
         };
-      in pkgs.mkShell {
+      in pkgs.stdenv.mkDerivation {
+        name = "nvim-vimrc-code";
+        src = ./.;
         buildInputs = [
           pkgs.nodejs
           local-neovim
         ] ++ extraNixDerivations;
+        installPhase = ''
+          mkdir -p $out
+          cp ${local-neovim}/bin/nvim $out/nvim
+        '';
       };
     };
 
 
-    packages.x86_64-linux.default = pkgs.buildEnv {
-      name = "nvimShell";
-      paths = [];
-    };
+    packages.x86_64-linux.default = self.lib.neovim { };
 
-    devShell.x86_64-linux = self.lib.neovim { };
+    # devShell.x86_64-linux = self.lib.neovim { };
 
   };
 }

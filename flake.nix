@@ -52,7 +52,7 @@
         ] ++ extraNixDerivations;
         installPhase = ''
           mkdir -p $out
-          cp ${local-neovim}/bin/nvim $out/nvim
+          cp -r ${local-neovim}/* $out
         '';
       };
     };
